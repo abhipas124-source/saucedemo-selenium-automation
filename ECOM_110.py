@@ -50,7 +50,6 @@ def opening_cart(driver):
         price_list.append(float(find_price.replace("$","")))
     print(cart_products)
     total = sum(price_list)
-    print(total)
     return cart_products,total
 
 
@@ -63,7 +62,16 @@ def checkout():
     checkouts = []
     time.sleep(1)
 
-    driver.find_element(By.XPATH, "//input[@data-test = 'firstName']").send_keys("")
+    negative_test = driver.find_elements(By.XPATH, "//div[@class ='checkout_info']")
+    for test in negative_test:
+        test.find_element(By.XPATH, ".//input[@data-test = 'firstName']").send_keys("")
+        test.find_element(By.XPATH, ".//input[@data-test = 'lastName']").send_keys("PASWAN")
+        test.find_element(By.XPATH, ".//input[@data-test = 'postalCode']").send_keys("122001")
+        test.find_element(By.XPATH, "//input[@data-test = 'continue']").click()
+        error_message = test.find_element(By.XPATH, ".//div[@class ='error-message-container error']").text
+        assert error_message == "Error: First Name is required"
+
+    driver.find_element(By.XPATH, "//input[@data-test = 'firstName']").send_keys("Abhishek")
     driver.find_element(By.XPATH, "//input[@data-test = 'lastName']").send_keys("PASWAN")
     driver.find_element(By.XPATH, "//input[@data-test = 'postalCode']").send_keys("122001")
     time.sleep(1)
